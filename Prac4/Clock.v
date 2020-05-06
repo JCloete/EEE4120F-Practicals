@@ -16,7 +16,7 @@ module WallClock(
     reg mTest = 0, hTest = 0;
     assign test[0] = mTest;
     assign test[1] = hTest;
-	//Add the reset
+	//Add the reset.
     wire resState;
     Delay_Reset Reset1(CLK100MHZ, res, resState);
     

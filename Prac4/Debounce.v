@@ -21,30 +21,29 @@
 
 
 module Debounce(
-    input clk,		//input clock
-    input Button,  //input reset signal (external button)
-    output reg Flag //output reset signal (delayed)
+    input Clk,
+    input but,
+    output reg flag
         );
-    //--------------------------------------------
-    reg previous_state;
-    reg [21:0]Count; //assume count is null on FPGA configuration
+        
+    reg prev;
+    reg [21:0]counter;
     
-    //--------------------------------------------
-    always @(posedge clk) begin  	//activates every clock edge
-       //previous_state <= Button;		// localise the reset signal
-       if (Button && Button != previous_state && &Count) begin		// reset block
-        Flag <= 1'b1;					// reset the output to 1
-         Count <= 0;
-         previous_state <= 1;
-      end 
-      else if (Button && Button != previous_state) begin
-         Flag <= 1'b0;
-         Count <= Count + 1'b1;
-      end 
-      else begin
-         Flag <= 1'b0;
-         previous_state <= Button;
-      end
-    
-    end //always
+    always @(posedge Clk)
+    begin
+        if (but && but != prev && &counter)
+        begin
+            prev <= 1;
+            flag <= 1;
+        end 
+        else if (but && but != prev)
+        begin
+            counter <= counter + 1'b1;
+            flag <= 0;
+        end 
+        else begin
+            prev <= but;
+            flag <= 0;
+        end
+    end
 endmodule

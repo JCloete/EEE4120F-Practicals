@@ -1,7 +1,5 @@
 `timescale 1ns / 1ps
 
-
-
 module WallClock(
 	input CLK100MHZ,
 	input[1:0] buts,
@@ -44,7 +42,7 @@ module WallClock(
     reg [3:0] mins2pwm = 4'd0;
     wire pwm;
     
-    reg [5:0]seconds;
+    reg [5:0]seconds = 0;
     assign LED = seconds;
 	//Initialize seven segment
 	// You will need to change some signals depending on you constraints

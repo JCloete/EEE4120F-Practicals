@@ -41,6 +41,3 @@ set_property -dict { PACKAGE_PIN R17   IOSTANDARD LVCMOS33 } [get_ports { pwmsli
 set_property -dict { PACKAGE_PIN T18   IOSTANDARD LVCMOS33 } [get_ports { pwmslider[5] }]; #IO_L7N_T1_D10_14 Sch=sw[5]
 set_property -dict { PACKAGE_PIN U18   IOSTANDARD LVCMOS33 } [get_ports { pwmslider[6] }]; #IO_L17N_T2_A13_D29_14 Sch=sw[6]
 set_property -dict { PACKAGE_PIN R13   IOSTANDARD LVCMOS33 } [get_ports { pwmslider[7] }]; #IO_L5N_T0_D07_14 Sch=sw[7]
-
-set_property -dict { PACKAGE_PIN V11   IOSTANDARD LVCMOS33 } [get_ports { test[0] }]; #IO_L7P_T1_D09_14 Sch=led[4]
-set_property -dict { PACKAGE_PIN V12   IOSTANDARD LVCMOS33 } [get_ports { test[1] }]; #IO_L18N_T2_A11_D27_14 Sch=led[5]

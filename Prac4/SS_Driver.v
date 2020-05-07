@@ -14,7 +14,7 @@ BCD_Decoder BCD_Decoder1 (BCD1, SS[1]);
 BCD_Decoder BCD_Decoder2 (BCD2, SS[2]);
 BCD_Decoder BCD_Decoder3 (BCD3, SS[3]);
 
-PWM pwmer_1 (Clk, pwmslider, pwm);
+PWM Pwmer_1 (Clk, pwmslider, pwm);
 
 // Counter to reduce the 100 MHz clock to 762.939 Hz (100 MHz / 2^17)
 reg [16:0]Count;

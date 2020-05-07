@@ -12,11 +12,10 @@ reg [7:0] pwmslider;
 wire [7:0] seg;
 wire [7:0] segdriv;
 wire [5:0] LED;
-wire [1:0] test;
 
 
 //UUT
-WallClock WC(clk, buts, res, pause, pwmslider, seg, segdriv, LED, test);
+WallClock WC(clk, buts, res, pause, pwmslider, seg, segdriv, LED);
 
 //Initialise
 initial

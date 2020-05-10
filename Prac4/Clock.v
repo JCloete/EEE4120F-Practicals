@@ -1,6 +1,5 @@
+// Set time and precision
 `timescale 1ns / 1ps
-
-
 
 module WallClock(
 	input CLK100MHZ, //Clock, defined in constraints
@@ -39,7 +38,7 @@ module WallClock(
     reg [3:0] mins2pwm = 4'd0;
     wire pwm; //Pwm state. Controls blinking
     
-    reg [5:0]seconds; //Holds value for seconds
+    reg [5:0]seconds = 0; //Holds value for seconds
     assign LED = seconds; //Display on the LEDs
 	//Initialize seven segment
 	// You will need to change some signals depending on you constraints

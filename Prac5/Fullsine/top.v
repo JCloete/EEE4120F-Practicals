@@ -62,7 +62,7 @@ always @(posedge CLK100MHZ) begin
     clkdiv <= clkdiv + 1;
     case (note)
         0: begin //Base
-            if (clkdiv >= f_base) begin
+            if (clkdiv >= f_base*2) begin
                 clkdiv[12:0] <= 0;
                 addra <= addra + 1;
             end

@@ -16,14 +16,14 @@ module top(
     // Memory IO
     reg ena = 1;
     reg wea = 0;
-    reg [7:0] addra=0;
+    reg [5:0] addra=0;
     reg [10:0] dina=0; //We're not putting data in, so we can leave this unassigned
     wire [10:0] douta;
     
     
     // Instantiate block memory here
     // Copy from the instantiation template and change signal names to the ones under "MemoryIO"
-    blk_mem_gen_0 sine_gen (
+    blk_mem_gen_1 quart_gen (
         .clka(CLK100MHZ),    // input wire clka
         .ena(ena),      // input wire ena
         .wea(wea),      // input wire [0 : 0] wea
@@ -50,15 +50,20 @@ module top(
     reg [8:0] f_base = 0;
     
     //Find a way to initialise the quarter-wave table
-    initial $readmemh("quartwav.hex", quarttable);
-    reg [1:0] neg;
-    initial neg = 2'b00;
-    
+    reg invert;
+    initial invert = 0;
+    //reg neg;
+    //initial neg = 0;
+    reg phasesw;
+    initial phasesw = 0;
     
 always @(posedge CLK100MHZ) begin   
-    PWM <= douta; // tie memory output to the PWM input
-    
-    //Quarter wave stuff
+    //PWM <= douta; // tie memory output to the PWM input
+    //PWM Logic
+    if (invert^phasesw)
+        PWM <= (2047) - douta;
+    else
+        PWM <= douta;
     
     f_base[8:0] = 746 + SW[7:0]; // get the "base" frequency to work from 
     
@@ -72,39 +77,58 @@ always @(posedge CLK100MHZ) begin
         0: begin //Base
             if (clkdiv >= f_base*2) begin
                 clkdiv[12:0] <= 0;
-                addra <= addra + 1;
+                if (invert)
+                    addra <= addra - 1;
+                else
+                    addra <= addra + 1;
             end
         end
         1: begin //1.25 Speed
-            if (clkdiv >= f_base*3/2) begin
+            if (clkdiv >= f_base*8/5) begin
                 clkdiv[12:0] <= 0;
-                addra <= addra +1;
+                if (invert)
+                    addra <= addra - 1;
+                else
+                    addra <= addra + 1;
             end
         end
         2: begin //1.5 Speed
-            if (clkdiv >= f_base*5/4) begin
+            if (clkdiv >= f_base*4/3) begin
                 clkdiv[12:0] <= 0;
-                addra <= addra + 1;
+                if (invert)
+                    addra <= addra - 1;
+                else
+                    addra <= addra + 1;
             end
         end
         3: begin //2 Speed
             if (clkdiv >= f_base) begin
                 clkdiv[12:0] <= 0;
-                addra <= addra +1;
+                if (invert)
+                    addra <= addra - 1;
+                else
+                    addra <= addra + 1;
             end
         end
         default: begin
             if (clkdiv >= 1493) begin
                 clkdiv[12:0] <= 0;
-                addra <= addra +1;
+                if (invert)
+                    addra <= addra - 1;
+                else
+                    addra <= addra + 1;
             end
         end
     endcase;
+    if (addra == 63)
+        invert <= 1;
+        phasesw <= ~phasesw;
+    if (addra == 0)
+        invert <= 0;
 end
 
 
 assign AUD_SD = 1'b1;  // Enable audio out
 assign LED[1:0] = note[1:0]; // Tie FRM state to LEDs so we can see and hear changes
-
 
 endmodule

@@ -6,7 +6,8 @@ module top(
     input but,
     output AUD_PWM, 
     output AUD_SD,
-    output [2:0] LED
+    output [2:0] LED,
+    output wire [10:0] out
     );
     
     // Toggle arpeggiator enabled/disabled
@@ -18,18 +19,18 @@ module top(
     reg wea = 0;
     reg [5:0] addra=0;
     reg [10:0] dina=0; //We're not putting data in, so we can leave this unassigned
-    wire [10:0] douta;
+//    wire [10:0] douta;
     
     
     // Instantiate block memory here
     // Copy from the instantiation template and change signal names to the ones under "MemoryIO"
-    blk_mem_gen_1 quart_gen (
+    blk_mem_gen_0 quart_gen (
         .clka(CLK100MHZ),    // input wire clka
         .ena(ena),      // input wire ena
         .wea(wea),      // input wire [0 : 0] wea
         .addra(addra),  // input wire [7 : 0] addra
         .dina(dina),    // input wire [10 : 0] dina
-        .douta(douta)  // output wire [10 : 0] douta
+        .douta(out)  // output wire [10 : 0] douta
     );
         
         //PWM Out - this gets tied to the BRAM
@@ -56,14 +57,17 @@ module top(
     //initial neg = 0;
     reg phasesw;
     initial phasesw = 0;
+    integer k;
     
 always @(posedge CLK100MHZ) begin   
     //PWM <= douta; // tie memory output to the PWM input
     //PWM Logic
+     k = out;
+
     if (invert^phasesw)
-        PWM <= (2047) - douta;
+        PWM <= (2047) - out;
     else
-        PWM <= douta;
+        PWM <= out;
     
     f_base[8:0] = 746 + SW[7:0]; // get the "base" frequency to work from 
     

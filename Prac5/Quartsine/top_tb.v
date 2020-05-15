@@ -18,9 +18,7 @@ always
 
 initial
     begin
-        
-        but <= 1;
-
+        but <= 0;
         #1000000 $finish;
     end
 endmodule

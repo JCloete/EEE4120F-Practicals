@@ -14,6 +14,7 @@ always @(posedge Clk)
 begin
     // Activates every clock edge
     LocalReset <= BTNS;
+    $monitor("Reset: %b", LocalReset);
     // Localise the reset signal
     if(LocalReset) 
         begin

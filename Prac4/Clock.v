@@ -9,12 +9,14 @@ module WallClock(
 	input [7:0] pwmslider, //Set of 8 switches. The 8 switches represent an 8-bit binary number. Higher the number, brighter the display
 	output wire [7:0] seg, //7-Segment display screen
 	output wire [7:0] segdriv, //Input that defines if a given digit on the 7-Seg is "on". There are 8 digits, we only turn 4 on.
-	output wire[5:0] LED //6 LEDs used to diaply the current seconds in binary.
+	output reg [5:0] seconds, //6 LEDs used to diaply the current seconds in binary.
+	
+	// registers for storing the time
+    output reg [3:0]hours1, //Hours tens decimal value
+	output reg [3:0]hours2, //Hours units
+	output reg [3:0]mins1, //Minutes tens
+	output reg [3:0]mins2 //Minutes units
     );
-    
-	//Add the reset
-    wire resState;
-    Delay_Reset Reset1(CLK100MHZ, res, resState); //Set up reset function. restState = 1 -> Reset clock
     
 	//Add and debounce the buttons
 	wire mState; //If high, increment minutes on next cycle
@@ -25,11 +27,6 @@ module WallClock(
 	Debounce Bounce3(CLK100MHZ, pause, pState);
 	// Instantiate Debounce modules here
 	
-	// registers for storing the time
-    reg [3:0]hours1=4'd0; //Hours tens decimal value
-	reg [3:0]hours2=4'd0; //Hours units
-	reg [3:0]mins1=4'd0; //Minutes tens
-	reg [3:0]mins2=4'd0; //Minutes units
     integer counter = 0; //Internal "clock" threshhold for seconds timescale
     
     reg [3:0] hours1pwm = 4'd0; //Used to actually display things. Will blank out when brightness needs to be adjusted.
@@ -38,8 +35,6 @@ module WallClock(
     reg [3:0] mins2pwm = 4'd0;
     wire pwm; //Pwm state. Controls blinking
     
-    reg [5:0]seconds = 0; //Holds value for seconds
-    assign LED = seconds; //Display on the LEDs
 	//Initialize seven segment
 	// You will need to change some signals depending on you constraints
 	SS_Driver SS_Driver1(
@@ -50,6 +45,18 @@ module WallClock(
         segdriv[3:0], seg //SegmentDrivers, SevenSegment
 	);
 	
+	//Initialise
+    initial
+    begin
+        // registers for storing the time
+        hours1 <= 4'd0; //Hours tens decimal value
+        hours2 <= 4'd0; //Hours units
+        mins1 <= 4'd5; //Minutes tens
+        mins2 <= 4'd7; //Minutes units
+        
+        seconds <= 6'd0;
+    end
+
 	//The main logic
 	always @(posedge CLK100MHZ) begin
 		// implement your logic here
@@ -65,6 +72,7 @@ module WallClock(
 		    mins1pwm <= mins1;
 		    mins2pwm <= mins2;
 		end
+	
 		if (!pause) begin
             if (mState) //After this is all the logic to track the advancement of time
                 mins2 <= mins2 + 4'b1;
@@ -95,18 +103,18 @@ module WallClock(
                       hours2 <= 0;
                       hours1 <= hours1 + 1;
                   end
-            if (resState) begin
+            if (res) begin
                 hours1 <= 0;
                 hours2 <= 0;
                 mins1 <= 0;
                 mins2 <= 0;
             end
             counter <= counter + 1; //COUNTER LOGIC
-            if (counter == 2000000) begin //If we hit 20mil clock cycles, advance seconds
+            if (counter == 199) begin //If we hit 20mil clock cycles, advance seconds
                 counter <= 0; //100MHz clock * 20mil cycles = 20ms
                 seconds <= seconds + 1; //Therefore clock is 5 times faster than normal
             end
-            if (seconds == 59) begin
+            if (seconds >= 59 && counter == 199) begin
                 seconds <= 0;
                 mins2 <= mins2 + 1;
                 if (mins2 == 9) begin

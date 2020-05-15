@@ -7,7 +7,9 @@ module top(
     output AUD_PWM, 
     output AUD_SD,
     output [2:0] LED,
-    output wire [10:0] out
+    output reg [10:0] magnitude,
+    output reg phasesw,
+    output reg invert
     );
     
     // Toggle arpeggiator enabled/disabled
@@ -17,9 +19,9 @@ module top(
     // Memory IO
     reg ena = 1;
     reg wea = 0;
-    reg [5:0] addra=0;
+    reg [5:0] addra=6'd0;
     reg [10:0] dina=0; //We're not putting data in, so we can leave this unassigned
-//    wire [10:0] douta;
+    wire [10:0] douta;
     
     
     // Instantiate block memory here
@@ -30,7 +32,7 @@ module top(
         .wea(wea),      // input wire [0 : 0] wea
         .addra(addra),  // input wire [7 : 0] addra
         .dina(dina),    // input wire [10 : 0] dina
-        .douta(out)  // output wire [10 : 0] douta
+        .douta(douta)  // output wire [10 : 0] douta
     );
         
         //PWM Out - this gets tied to the BRAM
@@ -51,23 +53,25 @@ module top(
     reg [8:0] f_base = 0;
     
     //Find a way to initialise the quarter-wave table
-    reg invert;
     initial invert = 0;
     //reg neg;
     //initial neg = 0;
-    reg phasesw;
     initial phasesw = 0;
-    integer k;
+    
+    initial magnitude = 1024;
     
 always @(posedge CLK100MHZ) begin   
     //PWM <= douta; // tie memory output to the PWM input
     //PWM Logic
-     k = out;
-
-    if (invert^phasesw)
-        PWM <= (2047) - out;
-    else
-        PWM <= out;
+    
+    if (invert ^ phasesw) begin
+        PWM <= (2047 - douta);
+        magnitude <= PWM;
+    end
+    else begin
+        PWM <= douta;
+        magnitude <= PWM;
+    end
     
     f_base[8:0] = 746 + SW[7:0]; // get the "base" frequency to work from 
     
@@ -124,14 +128,21 @@ always @(posedge CLK100MHZ) begin
             end
         end
     endcase;
-    if (addra == 63)
-        invert <= 1;
-        phasesw <= ~phasesw;
-    if (addra == 0)
-        invert <= 0;
 end
 
-
+always @(addra)
+begin
+if (addra == 63)
+    begin
+        invert <= 1;
+        phasesw <= ~phasesw;
+    end
+    if (addra == 0)
+    begin
+        invert <= 0;
+    end
+end
+    
 assign AUD_SD = 1'b1;  // Enable audio out
 assign LED[1:0] = note[1:0]; // Tie FRM state to LEDs so we can see and hear changes
 

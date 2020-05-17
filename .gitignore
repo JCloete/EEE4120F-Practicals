@@ -6,5 +6,35 @@ Prac4/Prac4.xpr
 Prac4/Prac4.cache/
 Prac4/Prac4.hw/
 Prac4/Prac4.ip_user_files/
+Prac4/Prac4.runs/
 Prac4/Prac4.sim/
+
+# Prac5 Files and stuff
+
+Prac5/img/
+
+# Quartsine
+# Files Ignore
+Prac5/Quartsine/Quartsine.xpr
+
+# Directories Ignore
+Prac5/Quartsine/Quartsine.cache/
+Prac5/Quartsine/Quartsine.hw/
+Prac5/Quartsine/Quartsine.ip_user_files/
+Prac5/Quartsine/Quartsine.runs/
+Prac5/Quartsine/Quartsine.sim/
+Prac5/Quartsine/Quartsine.srcs/
+
+# Quartsine
+# Files Ignore
+Prac5/Fullsine/Fullsine.xpr
+
+# Directories Ignore
+Prac5/Fullsine/Fullsine.cache/
+Prac5/Fullsine/Fullsine.hw/
+Prac5/Fullsine/Fullsine.ip_user_files/
+Prac5/Fullsine/Fullsine.runs/
+Prac5/Fullsine/Fullsine.sim/
+Prac5/Fullsine/Fullsine.srcs/
+
 
